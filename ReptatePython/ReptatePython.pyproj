@@ -6,8 +6,7 @@
     <ProjectGuid>a0c652a0-04c9-4cdf-8c12-9d371d3a56c7</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>ReptatePython.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <SearchPath>GUI\uifiles\;applications\;console\;core\;GUI\</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>ReptatePython</Name>
@@ -22,7 +21,44 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="applications\ApplicationCreep.py" />
+    <Compile Include="applications\ApplicationGt.py" />
+    <Compile Include="applications\ApplicationLVE.py" />
+    <Compile Include="applications\ApplicationMWD.py" />
+    <Compile Include="applications\ApplicationNLVE.py" />
+    <Compile Include="applications\ApplicationReact.py" />
+    <Compile Include="applications\ApplicationSANS.py" />
+    <Compile Include="applications\ApplicationTest.py" />
+    <Compile Include="applications\ApplicationTTS.py" />
+    <Compile Include="applications\ApplicationWindow.py" />
+    <Compile Include="console\Console.py" />
+    <Compile Include="GUI\AboutReptate.py" />
+    <Compile Include="GUI\DataSet.py" />
+    <Compile Include="GUI\uifiles\About_rc.py" />
+    <Compile Include="GUI\uifiles\MainWindow_rc.py" />
+    <Compile Include="GUI\uifiles\Reptate_rc.py" />
+    <Compile Include="GUI\uifiles\Symbols_rc.py" />
+    <Compile Include="GUI\uifiles\Theory_rc.py" />
     <Compile Include="ReptatePython.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="core\" />
+    <Folder Include="GUI\" />
+    <Folder Include="console\" />
+    <Folder Include="applications\" />
+    <Folder Include="GUI\uifiles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GUI\uifiles\About.qrc" />
+    <Content Include="GUI\uifiles\AboutDialog.ui" />
+    <Content Include="GUI\uifiles\ApplicationWindow.ui" />
+    <Content Include="GUI\uifiles\Create_rc.cmd" />
+    <Content Include="GUI\uifiles\DataSet.ui" />
+    <Content Include="GUI\uifiles\MainWindow.qrc" />
+    <Content Include="GUI\uifiles\Reptate.qrc" />
+    <Content Include="GUI\uifiles\ReptateMainWindow.ui" />
+    <Content Include="GUI\uifiles\Symbols.qrc" />
+    <Content Include="GUI\uifiles\Theory.qrc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
