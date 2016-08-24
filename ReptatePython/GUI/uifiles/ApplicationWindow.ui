@@ -63,7 +63,7 @@
   </widget>
   <widget class="QDockWidget" name="ViewDataTheorydockWidget">
    <property name="styleSheet">
-    <string notr="true">color: rgb(0, 95, 0);</string>
+    <string notr="true"/>
    </property>
    <property name="features">
     <set>QDockWidget::NoDockWidgetFeatures</set>
@@ -86,23 +86,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QComboBox" name="comboBox_3">
-       <item>
-        <property name="text">
-         <string>View1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>View2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>View3</string>
-        </property>
-       </item>
-      </widget>
+      <widget class="QComboBox" name="viewComboBox"/>
      </item>
      <item>
       <widget class="QTabWidget" name="DataSettabWidget">

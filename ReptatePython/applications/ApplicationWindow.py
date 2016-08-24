@@ -1,3 +1,5 @@
+import os
+import logging
 from PyQt4.QtGui import *
 from PyQt4.uic import loadUiType
 import seaborn as sns   
@@ -8,26 +10,34 @@ from matplotlib.backends.backend_qt4agg import (
     NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.backends.backend_pdf import PdfPages
 import itertools
-import numpy as np
 import Symbols_rc
+import numpy as np
 from PyQt4 import QtCore
+from DataSet import *
+from DataSetItem import *
+
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
     _fromUtf8 = lambda s: s
-
-from DataSet import *
     
 Ui_AppWindow, QMainWindow = loadUiType('GUI/uifiles/ApplicationWindow.ui')
 
 class ApplicationWindow(QMainWindow, Ui_AppWindow):
-    name='Application Template'
-    fig=0
-    ax=0
-    canvas=0
     def __init__(self, ):
         super(ApplicationWindow, self).__init__()
         self.setupUi(self)
+
+        self.logger = logging.getLogger('ReptateLogger')
+        self.name='Application Template'
+        self.figure=0
+        self.ax=0
+        self.canvas=0
+        self.views=[]
+        self.files={}
+
+        # Accept Drag and drop events
+        self.setAcceptDrops(True)
 
         ################
         # SETUP TOOLBARS
@@ -45,7 +55,6 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         tb.setIconSize(QtCore.QSize(24,24))
         tb.addAction(self.actionNew_Empty_Dataset)
         tb.addAction(self.actionView_All_Sets)
-        #tb.addAction(self.actionData_Representation)
         tbut = QToolButton()
         tbut.setPopupMode(QToolButton.MenuButtonPopup)
         tbut.setDefaultAction(self.actionData_Representation)
@@ -56,7 +65,6 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         tb.addWidget(tbut)
         #
         tb.addAction(self.actionReload_Data)
-        #tb.addAction(self.actionShow_Limits)
         tbut = QToolButton()
         tbut.setPopupMode(QToolButton.MenuButtonPopup)
         tbut.setDefaultAction(self.actionShow_Limits)
@@ -72,7 +80,8 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         tb.addAction(self.actionPrint)
         self.ViewDataTheoryLayout.insertWidget(1, tb)
         self.ViewDataTheorydockWidget.Width=500
-                
+        self.ViewDataTheorydockWidget.setTitleBarWidget(QWidget())                
+
         # Tests TableWidget
         self.tableWidget.setRowCount(30)
         self.tableWidget.setColumnCount(10)
@@ -87,20 +96,26 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         #plt.style.use('seaborn-talk')
         #plt.style.use('seaborn-paper')
         plt.style.use('seaborn-poster')
-        self.fig=plt.figure()
-        self.ax = self.fig.add_subplot(111)
-        self.canvas = FigureCanvas(self.fig)
+        self.figure=plt.figure()
+        self.ax = self.figure.add_subplot(111)
+        self.canvas = FigureCanvas(self.figure)
         self.mplvl.addWidget(self.canvas)
         self.canvas.draw()
         sns.despine() # Remove up and right side of plot box
+        # LEGEND STUFF
+        leg=plt.legend(loc='upper left', frameon=True, ncol=2)
+        if leg:
+            leg.draggable()
                 
         # EVENT HANDLING
-        #connection_id = self.fig.canvas.mpl_connect('button_press_event', self.onclick)
-        connection_id = self.fig.canvas.mpl_connect('resize_event', self.resizeplot)
-        #connection_id = self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)   
+        #connection_id = self.figure.canvas.mpl_connect('button_press_event', self.onclick)
+        connection_id = self.figure.canvas.mpl_connect('resize_event', self.resizeplot)
+        #connection_id = self.figure.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)   
         connection_id = self.actionPrint.triggered.connect(self.printPlot)
         connection_id = self.actionInspect_Data.triggered.connect(self.showDataInspector)
         connection_id = self.actionNew_Empty_Dataset.triggered.connect(self.createNew_Empty_Dataset)
+        connection_id = self.actionReload_Data.triggered.connect(self.DEBUG_populate_current_Dataset_with_random_data)
+
         connection_id = self.actionShow_Small_Symbols.triggered.connect(self.Small_Symbols)
         connection_id = self.actionShow_Large_Symbols.triggered.connect(self.Large_Symbols)
 
@@ -112,6 +127,29 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         # TEST GET CLICKABLE OBJECTS ON THE X AXIS
         #xaxis = self.ax.get_xticklabels()
         #print (xaxis)
+
+    def populateViews(self):
+        for i in self.views:
+            self.viewComboBox.addItem(i.name)
+
+    def dragEnterEvent(self, e):      
+        if e.mimeData().hasUrls():
+            e.accept()
+        else:
+            e.ignore() 
+
+    def dropEvent(self, e):
+        reptatelogger = logging.getLogger('ReptateLogger')
+        for url in e.mimeData().urls():
+            path = url.toLocalFile()
+            if os.path.isfile(path):
+                split_file=path.split('.')
+                file_ext=split_file[len(split_file)-1]
+                if file_ext in self.files.keys():
+                    if (self.DataSettabWidget.count()==0):
+                        self.createNew_Empty_Dataset()
+                    # ADD FILE TO CURRENT DATASET
+                    reptatelogger.debug(path)
 
     def No_Limits(self):
         self.actionShow_Limits.setIcon(self.actionNo_Limits.icon())
@@ -131,8 +169,7 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
     def Large_Symbols(self):
         self.actionData_Representation.setIcon(self.actionShow_Large_Symbols.icon())
     
-        
-    def createNew_Empty_Dataset(self):
+    def DEBUG_populate_current_Dataset_with_random_data(self):
         # Plot some random walks
         num_lines=10
         num_points=200
@@ -145,18 +182,18 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         linelst = itertools.cycle((':', '-', '-.', '--'))
 
         # Add New tab to DataSettabWidget
-        ind=self.DataSettabWidget.count()+1
-        ds = DataSet()
-        self.DataSettabWidget.addTab(ds, 'DataSet'+'%d'%ind)
-        self.DataSettabWidget.setCurrentIndex(ind-1)
+        if (self.DataSettabWidget.count()==0): return
+        ds=self.DataSettabWidget.currentWidget()
         
-        hd=ds.DataSettreeWidget.header()
-        w=ds.DataSettreeWidget.width()
-        w/=hd.count()
-        for i in range(hd.count()):
-            hd.resizeSection(0, w)
+        nold = ds.DataSettreeWidget.topLevelItemCount()
+        for i in range(nold):
+            marker=next(markerlst)
+            edgecolors=next(palette)
 
         for i in range(num_lines):
+            root = DataSetItem(ds.DataSettreeWidget, ['Line %02d'%(i+nold), "%g"%np.sin(i), "%g"%(1-1/(i+1))])
+            root.setCheckState(0, 2)
+            root.setIcon(0, QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico'))
             x=np.arange(num_points)
             y=np.cumsum(np.random.randn(num_points))
             # DIFFERENT STYLES
@@ -172,15 +209,13 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
             #c=next(palette)
             #self.ax.plot(y, color=c, marker=next(markerlst), ms=12, markerfacecolor=c, markeredgewidth=1, markeredgecolor='black', label='Line %d'%i)
             # EMPTY SYMBOLS 
-            self.ax.scatter(x, y, marker=next(markerlst), s=120, facecolors='none', edgecolors=next(palette), linewidths=1, label='Line %d'%i)
+            root.series=self.ax.scatter(x, y, marker=next(markerlst), s=120, facecolors='none', edgecolors=next(palette), linewidths=1, label='Line %02d'%(i+nold))
             # EMPTY BLACK AND WHITE SYMBOLS 
             #self.ax.scatter(x, y, marker=next(markerlst), s=120, facecolors='none', edgecolors='black', label='Line %d'%i)
             # FILLED SYMBOLS with Black borders
             #self.ax.scatter(x, y, marker=next(markerlst), s=120, facecolors=next(palette), edgecolors='black', label='Line %d'%i)
 
-            root = QTreeWidgetItem(ds.DataSettreeWidget, ['Line %d'%i, "hello", "it's me"])
-            root.setCheckState(0, 2)
-            root.setIcon(0, QIcon('Images/symbols/'+pname+str(i+1)+'.ico'))
+            #root = QTreeWidgetItem(ds.DataSettreeWidget, ['Line %d'%i, "%g"%np.sin(i), "%g"%(1-1/(i+1))])
                         
         # LEGEND STUFF
         leg=plt.legend(loc='upper left', frameon=True, ncol=2)
@@ -195,7 +230,25 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
     
         plt.tight_layout(pad=1.2)
         self.canvas.draw()
-
+        
+    def createNew_Empty_Dataset(self):
+        # Add New empty tab to DataSettabWidget
+        ind=self.DataSettabWidget.count()+1
+        ds = DataSet()
+        self.DataSettabWidget.addTab(ds, 'DataSet'+'%d'%ind)
+        self.DataSettabWidget.setCurrentIndex(ind-1)
+        
+        dfile=list(self.files.values())[0] 
+        dataset_header=dfile.basic_file_parameters[:]
+        dataset_header.insert(0, "File")
+        ds.DataSettreeWidget.setHeaderItem(QTreeWidgetItem(dataset_header))   
+        hd=ds.DataSettreeWidget.header()
+        w=ds.DataSettreeWidget.width()
+        w/=hd.count()
+        for i in range(hd.count()):
+            hd.resizeSection(i, w)
+            #hd.setTextAlignment(i, Qt.AlignHCenter)
+                                    
     def showDataInspector(self):
         if self.DataInspectordockWidget.isHidden():
             self.DataInspectordockWidget.show()
@@ -203,12 +256,9 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
             self.DataInspectordockWidget.hide()
         
     def printPlot(self):
-        #pp = PdfPages('multipage.pdf')
-        #pp.savefig()
-        #pp.close()
-        #fig.set_size_inches(6.5, 5.5, forward=True)
-        plt.savefig("locus.pdf")
-        #plt.savefig("locus.png")    
+        fileName = QFileDialog.getSaveFileName(self,
+            "Export plot", "", "Image (*.png);;PDF (*.pdf);; Postscript (*.ps);; EPS (*.eps);; Vector graphics (*.svg)");
+        plt.savefig(fileName)
         
     def on_plot_hover(self, event):
         pass

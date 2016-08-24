@@ -1,5 +1,5 @@
 <RCC>
-  <qresource prefix="/icons">
+  <qresource prefix="/Icons">
     <file>Images/symbols/afmhot1.ico</file>
     <file>Images/symbols/afmhot2.ico</file>
     <file>Images/symbols/afmhot3.ico</file>

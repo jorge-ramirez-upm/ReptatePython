@@ -32,6 +32,14 @@
     <Compile Include="applications\ApplicationTTS.py" />
     <Compile Include="applications\ApplicationWindow.py" />
     <Compile Include="console\Console.py" />
+    <Compile Include="core\DataFiles.py" />
+    <Compile Include="core\DataSetItem.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Table.py" />
+    <Compile Include="core\View.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GUI\AboutReptate.py" />
     <Compile Include="GUI\DataSet.py" />
     <Compile Include="GUI\uifiles\About_rc.py" />
@@ -47,6 +55,7 @@
     <Folder Include="console\" />
     <Folder Include="applications\" />
     <Folder Include="GUI\uifiles\" />
+    <Folder Include="theories\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="GUI\uifiles\About.qrc" />

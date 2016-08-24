@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Images/Clip.ico</file>
     <file>Images/Exit.ico</file>
     <file>Images/Help.ico</file>
     <file>Images/qt.ico</file>

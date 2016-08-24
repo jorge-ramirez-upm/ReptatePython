@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ProfilingTarget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ProjectTarget>
+    <TargetProject>a0c652a0-04c9-4cdf-8c12-9d371d3a56c7</TargetProject>
+    <FriendlyName>ReptatePython</FriendlyName>
+  </ProjectTarget>
+  <Reports>
+    <Report>
+      <Filename>C:\Users\Jorge\AppData\Local\Temp\ReptatePython_20160823.vsp</Filename>
+    </Report>
+  </Reports>
+</ProfilingTarget>
