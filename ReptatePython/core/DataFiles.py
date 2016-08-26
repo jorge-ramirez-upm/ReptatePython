@@ -26,6 +26,7 @@ class TXTColumnFile:
 
     def read_file(self, filename):
         dt=Table(filename)
+        dt.data_file_type = self
         f = open(filename, "r")
         line=f.readline()
         items=line.split(';')

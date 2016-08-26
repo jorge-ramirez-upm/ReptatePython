@@ -5,6 +5,8 @@ class Table:
     
     def __init__(self, file_name="", num_columns=0, num_lines=0):
         self.file_name=file_name
+        tmpname = file_name.split('/')
+        self.file_name_short=tmpname[len(tmpname)-1]
         self.num_columns=num_columns
         self.num_lines=num_lines
         self.data_file_type=None

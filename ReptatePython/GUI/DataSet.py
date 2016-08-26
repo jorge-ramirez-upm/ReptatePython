@@ -63,11 +63,23 @@ class DataSet(QWidget, Ui_DataSet):
         obj.setAlternatingRowColors(True)
         obj.setFrameShape(QFrame.NoFrame)
         obj.setFrameShadow(QFrame.Plain)
+        #obj.setEditTriggers(QAbstractItemView.NoEditTriggers) 
+        obj.setEditTriggers(obj.NoEditTriggers) 
+        connection_id = obj.itemDoubleClicked.connect(self.onTreeWidgetItemDoubleClicked)
+        self.actionNew_Theory.triggered.connect(self.NewTheory)
         #obj.setStyleSheet(QStyle("QTreeWidget::item { border: 0.5px ; border-style: solid ; border-color: lightgray ;}"))
         ##obj.styleSheet="QTreeWidget::item { border: 0.5px ; border-style: solid ; border-color: lightgray ;}\n"
         self.TheorytabWidget.addTab(obj, thname+'%d'%self.numtheories)
         self.TheorytabWidget.setCurrentIndex(self.numtheories-1)
-        root = QTreeWidgetItem(obj, ['Param1', "%g"%4.345])
-        root.setCheckState(0,2)
-        root = QTreeWidgetItem(obj, ['Param2', "%g"%2.365])
-        root.setCheckState(0,2)
+        item = QTreeWidgetItem(obj, ['Param1', "%g"%4.345])
+        item.setCheckState(0,2)
+        item.setFlags(item.flags() | Qt.ItemIsEditable)
+        item = QTreeWidgetItem(obj, ['Param2', "%g"%2.365])
+        item.setCheckState(0,2)
+        item.setFlags(item.flags() | Qt.ItemIsEditable)
+
+    def onTreeWidgetItemDoubleClicked(self, item, column):
+        if (column==1):
+            thcurrent = self.TheorytabWidget.currentWidget()
+            thcurrent.editItem(item, column)
+            

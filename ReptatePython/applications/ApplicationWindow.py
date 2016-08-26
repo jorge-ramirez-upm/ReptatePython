@@ -149,7 +149,24 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
                     if (self.DataSettabWidget.count()==0):
                         self.createNew_Empty_Dataset()
                     # ADD FILE TO CURRENT DATASET
-                    reptatelogger.debug(path)
+                    dt = self.files[file_ext].read_file(path)
+                    self.addTableToCurrentDataSet(dt)
+                    #msg = QMessageBox()
+                    #msg.setText(path)
+                    #msg.exec_()
+
+    def addTableToCurrentDataSet(self, dt):
+        ds=self.DataSettabWidget.currentWidget()
+        lnew = list(dt.file_parameters.values())
+        lnew.insert(0, dt.file_name_short)
+        newitem = DataSetItem(ds.DataSettreeWidget, lnew)
+        newitem.setCheckState(0, 2)
+        #root.setIcon(0, QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico'))
+        x=np.arange(100)
+        y=np.cumsum(np.random.randn(100))
+        newitem.series=self.ax.scatter(x, y, label=dt.file_name_short)
+        self.canvas.draw()
+        
 
     def No_Limits(self):
         self.actionShow_Limits.setIcon(self.actionNo_Limits.icon())
