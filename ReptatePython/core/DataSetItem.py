@@ -1,6 +1,7 @@
 from PyQt4.QtGui import *
+from Table import *
 
-class DataSetItem(QTreeWidgetItem):
+class DataSetItem(QTreeWidgetItem, Table):
     """ Each item of a dataset is a wrapper of the QTreeWidgetItem
         It contains the necessary tables and types
     """
@@ -11,6 +12,10 @@ class DataSetItem(QTreeWidgetItem):
 
     def __init__(self, parent=None, itemlist=[], type=0):
         QTreeWidgetItem.__init__(self, parent, itemlist, type)
+
+    def __init__(self, parent=None, itemlist=[], type=0, file_name="dummy", file_type=None):
+        QTreeWidgetItem.__init__(self, parent, itemlist, type)
+        Table.__init__(self, file_name, file_type)
 
     def __lt__(self, otherItem):
         column = self.treeWidget().sortColumn()

@@ -44,7 +44,6 @@ class DataSet(QWidget, Ui_DataSet):
         if (item.series):
             item.series.set_visible(item.checkState(0)==Qt.Checked)
             item.series.figure.canvas.draw()
-        
 
     def resizeEvent(self, evt=None):
         hd=self.DataSettreeWidget.header()

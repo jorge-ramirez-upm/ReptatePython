@@ -3,13 +3,13 @@ import numpy as np
 class Table:
     """ Basic class for experimental and theory data storage and handling """
     
-    def __init__(self, file_name="", num_columns=0, num_lines=0):
+    def __init__(self, file_name="", data_file_type=None):
         self.file_name=file_name
         tmpname = file_name.split('/')
         self.file_name_short=tmpname[len(tmpname)-1]
         self.num_columns=num_columns
         self.num_lines=num_lines
-        self.data_file_type=None
+        self.data_file_type=data_file_type
         self.index=0 # Don't know if I need it
         self.file_parameters={}
         self.header_lines=[] # Header lines in file

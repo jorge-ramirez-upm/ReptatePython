@@ -124,9 +124,30 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         connection_id = self.actionHorizontal_Limits.triggered.connect(self.Horizontal_Limits)
         connection_id = self.actionBoth_Limits.triggered.connect(self.Both_Limits)
             
+        connection_id = self.viewComboBox.currentIndexChanged.connect(self.Change_View)
+
         # TEST GET CLICKABLE OBJECTS ON THE X AXIS
         #xaxis = self.ax.get_xticklabels()
         #print (xaxis)
+
+    def Change_View(self):
+        current_view = self.views[self.viewComboBox.currentIndex()]
+        
+        #msg = QMessageBox()
+        #msg.setText(current_view.name)
+        #msg.exec_()
+
+        current_dataset = self.DataSettabWidget.currentWidget()
+        if (current_dataset==None):
+            return
+        nitems = current_dataset.DataSettreeWidget.topLevelItemCount()
+        for i in range(nitems):
+            item = current_dataset.DataSettreeWidget.topLevelItem(i)
+            #msg = QMessageBox()
+            #msg.setText(item.text(0))
+            #msg.exec_()
+            
+
 
     def populateViews(self):
         for i in self.views:
@@ -159,7 +180,7 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         ds=self.DataSettabWidget.currentWidget()
         lnew = list(dt.file_parameters.values())
         lnew.insert(0, dt.file_name_short)
-        newitem = DataSetItem(ds.DataSettreeWidget, lnew)
+        newitem = DataSetItem(ds.DataSettreeWidget, lnew, )
         newitem.setCheckState(0, 2)
         #root.setIcon(0, QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico'))
         x=np.arange(100)
