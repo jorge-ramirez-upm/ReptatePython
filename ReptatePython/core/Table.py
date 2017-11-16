@@ -3,7 +3,7 @@ import numpy as np
 class Table:
     """ Basic class for experimental and theory data storage and handling """
     
-    def __init__(self, file_name="", data_file_type=None):
+    def __init__(self, file_name="", data_file_type=None, num_columns=0 ,num_lines=0):
         self.file_name=file_name
         tmpname = file_name.split('/')
         self.file_name_short=tmpname[len(tmpname)-1]

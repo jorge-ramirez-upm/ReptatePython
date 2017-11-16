@@ -1,18 +1,18 @@
 import os
 import logging
-from PyQt4.QtGui import *
-from PyQt4.uic import loadUiType
+from PyQt5.QtGui import *
+from PyQt5.uic import loadUiType
 import seaborn as sns   
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import (
-    FigureCanvasQTAgg as FigureCanvas,
-    NavigationToolbar2QT as NavigationToolbar)
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.backends.backend_pdf import PdfPages
 import itertools
 import Symbols_rc
 import numpy as np
-from PyQt4 import QtCore
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QToolBar, QToolButton, QMenu, QFileDialog
 from DataSet import *
 from DataSetItem import *
 
@@ -209,8 +209,8 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
     
     def DEBUG_populate_current_Dataset_with_random_data(self):
         # Plot some random walks
-        num_lines=10
-        num_points=200
+        num_lines=15
+        num_points=50
         #palette = itertools.cycle(sns.color_palette("Set1",n_colors=num_lines, desat=.5)) 
         #palette = itertools.cycle(sns.color_palette("Blues_d",n_colors=num_lines)) 
         pname="default" # nipy_spectral gist_ncar gist_rainbow Dark2 cool, afmhot, hsl, husl, deep, muted, bright, pastel, dark, colorblind, viridis
@@ -218,6 +218,9 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         palette=itertools.cycle(((0,0,0),(1.0,0,0),(0,1.0,0),(0,0,1.0),(1.0,1.0,0),(1.0,0,1.0),(0,1.0,1.0),(0.5,0,0),(0,0.5,0),(0,0,0.5),(0.5,0.5,0),(0.5,0,0.5),(0,0.5,0.5),(0.25,0,0),(0,0.25,0),(0,0,0.25),(0.25,0.25,0),(0.25,0,0.25),(0,0.25,0.25)))
         markerlst = itertools.cycle(('o', 'v', '^', '<', '>', '8', 's', 'p', '*', 'h', 'H', 'D', 'd')) 
         linelst = itertools.cycle((':', '-', '-.', '--'))
+
+        # 8 octagon, p pentagon, * star, h hexagon vertex up, H hexagon vertex right, D diamond, d rombo
+        symbols = {'o':'circle','v':'triangledown','^':'triangleup','<':'triangleleft','>':'triangleright','8':'octagon','s':'square','p':'pentagon','*':'star','h':'hexagonvertexup','H':'hexagonvertexright','D':'diamond','d':'romb'}
 
         # Add New tab to DataSettabWidget
         if (self.DataSettabWidget.count()==0): return
@@ -231,7 +234,34 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
         for i in range(num_lines):
             root = DataSetItem(ds.DataSettreeWidget, ['Line %02d'%(i+nold), "%g"%np.sin(i), "%g"%(1-1/(i+1))])
             root.setCheckState(0, 2)
-            root.setIcon(0, QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico'))
+
+            
+            pp = next(palette)
+            mm=next(markerlst)
+            #qp = QPixmap(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico')
+            #qp = QPixmap(16,16)
+            qp = QPixmap(':/Icons/Images/symbols/'+symbols[mm]+'.ico')
+            mask = qp.createMaskFromColor(QColor(0, 0, 0), Qt.MaskOutColor)
+            qpainter = QPainter()
+            qpainter.begin(qp)
+            qpainter.setPen(QColor(int(255*pp[0]),int(255*pp[1]),int(255*pp[2]),255))
+            qpainter.drawPixmap(qp.rect(),mask,mask.rect())
+            qpainter.end()
+
+            #qcolor=QColor(255,255,255)
+            #qp.fill(qcolor)
+            #color = QColor(int(255*pp[0]),int(255*pp[1]),int(255*pp[2]),255)
+            #pen = QPen(color)
+            #pen.setWidth(3)
+            #qpainter.setPen(pen)         
+            #qpainter.drawRect(2,2,12,12)
+            q = QIcon(qp)
+            #q = QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico')
+
+
+
+            root.setIcon(0, q)
+            #root.setIcon(0, QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico'))
             x=np.arange(num_points)
             y=np.cumsum(np.random.randn(num_points))
             # DIFFERENT STYLES
@@ -247,7 +277,8 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
             #c=next(palette)
             #self.ax.plot(y, color=c, marker=next(markerlst), ms=12, markerfacecolor=c, markeredgewidth=1, markeredgecolor='black', label='Line %d'%i)
             # EMPTY SYMBOLS 
-            root.series=self.ax.scatter(x, y, marker=next(markerlst), s=120, facecolors='none', edgecolors=next(palette), linewidths=1, label='Line %02d'%(i+nold))
+            #root.series=self.ax.scatter(x, y, marker=next(markerlst), s=120, facecolors='none', edgecolors=next(palette), linewidths=1, label='Line %02d'%(i+nold))
+            root.series=self.ax.scatter(x, y, marker=mm, s=120, facecolors='none', edgecolors=pp, linewidths=1, label='Line %02d'%(i+nold))
             # EMPTY BLACK AND WHITE SYMBOLS 
             #self.ax.scatter(x, y, marker=next(markerlst), s=120, facecolors='none', edgecolors='black', label='Line %d'%i)
             # FILLED SYMBOLS with Black borders
@@ -296,7 +327,8 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
     def printPlot(self):
         fileName = QFileDialog.getSaveFileName(self,
             "Export plot", "", "Image (*.png);;PDF (*.pdf);; Postscript (*.ps);; EPS (*.eps);; Vector graphics (*.svg)");
-        plt.savefig(fileName)
+        # TODO: Set DPI, FILETYPE, etc
+        plt.savefig(fileName[0])
         
     def on_plot_hover(self, event):
         pass

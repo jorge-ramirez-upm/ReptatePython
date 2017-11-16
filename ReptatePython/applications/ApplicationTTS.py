@@ -1,5 +1,4 @@
-#from PyQt4.uic import loadUiType
-from PyQt4.QtGui import *
+from PyQt5.QtGui import *
 from ApplicationWindow import *
 
 class ApplicationTTS(ApplicationWindow):

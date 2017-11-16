@@ -3,8 +3,9 @@ import re
 import sys
 import code
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QTextEdit
 
 class Console(QTextEdit):
 
@@ -45,7 +46,7 @@ class Console(QTextEdit):
     def printBanner(self):
         self.write(sys.version)
         self.write(' on ' + sys.platform + '\n')
-        self.write('PyQt4 ' + PYQT_VERSION_STR + '\n')
+        self.write('PyQt5 ' + PYQT_VERSION_STR + '\n')
         self.write('RepTate 1.0\n')
         msg = 'Type !hist for a history view and !hist(n) history index recall'
         self.write(msg + '\n')

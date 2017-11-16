@@ -1,8 +1,9 @@
-from PyQt4.QtGui import *
-from PyQt4.uic import loadUiType
+from PyQt5.QtGui import *
+from PyQt5.uic import loadUiType
 import itertools
 import Symbols_rc
-from PyQt4.QtCore import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QWidget, QTreeWidget, QTabWidget, QHeaderView, QToolBar, QComboBox
 from DataSetItem import *
 
 Ui_DataSet, QWidget = loadUiType('GUI/uifiles/DataSet.ui')
@@ -15,7 +16,7 @@ class DataSet(QWidget, Ui_DataSet):
         self.DataSettreeWidget.setIndentation(0)
         self.DataSettreeWidget.setHeaderItem(QTreeWidgetItem([""]))   
         hd=self.DataSettreeWidget.header()
-        hd.setMovable(False)
+        hd.setSectionsMovable(False)
         w=self.DataSettreeWidget.width()
         w/=hd.count()
         for i in range(hd.count()):

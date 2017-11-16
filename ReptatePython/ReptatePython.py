@@ -3,9 +3,10 @@ import sys
 import os
 import logging
 import logging.handlers
-from PyQt4.QtCore import *
-from PyQt4.uic import loadUiType
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.uic import loadUiType
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication
 
 sys.path.append('GUI')
 sys.path.append('GUI/uifiles')
