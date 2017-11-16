@@ -232,36 +232,25 @@ class ApplicationWindow(QMainWindow, Ui_AppWindow):
             edgecolors=next(palette)
 
         for i in range(num_lines):
-            root = DataSetItem(ds.DataSettreeWidget, ['Line %02d'%(i+nold), "%g"%np.sin(i), "%g"%(1-1/(i+1))])
-            root.setCheckState(0, 2)
 
+            # Add coloured symbol to the DataSet legend
+            mm=next(markerlst)
+            qp = QPixmap(':/Icons/Images/symbols/'+symbols[mm]+'.ico')
+            
+            mask = qp.createMaskFromColor(QColor(0, 0, 0), Qt.MaskOutColor)
             
             pp = next(palette)
-            mm=next(markerlst)
-            #qp = QPixmap(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico')
-            #qp = QPixmap(16,16)
-            qp = QPixmap(':/Icons/Images/symbols/'+symbols[mm]+'.ico')
-            mask = qp.createMaskFromColor(QColor(0, 0, 0), Qt.MaskOutColor)
             qpainter = QPainter()
             qpainter.begin(qp)
             qpainter.setPen(QColor(int(255*pp[0]),int(255*pp[1]),int(255*pp[2]),255))
             qpainter.drawPixmap(qp.rect(),mask,mask.rect())
             qpainter.end()
-
-            #qcolor=QColor(255,255,255)
-            #qp.fill(qcolor)
-            #color = QColor(int(255*pp[0]),int(255*pp[1]),int(255*pp[2]),255)
-            #pen = QPen(color)
-            #pen.setWidth(3)
-            #qpainter.setPen(pen)         
-            #qpainter.drawRect(2,2,12,12)
+            
             q = QIcon(qp)
-            #q = QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico')
-
-
-
+            root = DataSetItem(ds.DataSettreeWidget, ['Line %02d'%(i+nold), "%g"%np.sin(i), "%g"%(1-1/(i+1))])
+            root.setCheckState(0, 2)
             root.setIcon(0, q)
-            #root.setIcon(0, QIcon(':/Icons/Images/symbols/'+pname+str(i+1)+'.ico'))
+
             x=np.arange(num_points)
             y=np.cumsum(np.random.randn(num_points))
             # DIFFERENT STYLES
